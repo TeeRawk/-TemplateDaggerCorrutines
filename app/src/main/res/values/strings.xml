@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Kotlin Template</string>
+    <string name="internet_connection_unavailable">Internet connection unavailable</string>
+    <string name="timeout">Timeout error. Connection may be too slow.</string>
+    <string name="error_no_data_found">Error. No data found. Check your internet connection</string>
+    <string name="invalid_credentials">The username and password you entered don\\\'t match</string>
+    <string name="email_is_taken">Email is taken</string>
+    <string name="please_wait">Please wait</string>
+    <string name="your_session_expired">Your session expired</string>
+
+</resources>

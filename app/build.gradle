@@ -1,0 +1,138 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'io.fabric'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
+apply from: '../gradle.properties'
+apply plugin: 'kotlin-android-extensions'
+
+repositories {
+    maven { url "http://dl.bintray.com/populov/maven" }
+    maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
+}
+
+def getDate() {
+    return new Date().format('dd/MM/yyyy--HH:mm')
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        applicationId "com.teerawk"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_KEYSTORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS_NAME
+            keyPassword RELEASE_KEY_ALIAS_PASSWORD
+        }
+    }
+
+    buildTypes {
+        release {
+//            signingConfig signingConfigs.release
+            proguardFile 'proguard.cfg'
+            minifyEnabled true
+            shrinkResources true
+            ext.enableCrashlytics = true
+            ext.betaDistributionReleaseNotes = getDate()
+            ext.betaDistributionGroupAliases = "android"
+        }
+        debug {
+//            signingConfig signingConfigs.release
+            minifyEnabled false
+            ext.enableCrashlytics = false
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    //Realm
+    kapt 'dk.ilios:realmfieldnameshelper:1.1.0'
+
+    // Android
+    implementation "com.android.support:design:$android_support"
+
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // REST
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+  //  compile "com.squareup.retrofit2:adapter-rxjava2:$retrofit"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp"
+
+    implementation 'ru.gildor.coroutines:kotlin-coroutines-retrofit:0.8.2'
+
+    // Dagger dependencies
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+    // Rx
+//    compile "io.reactivex.rxjava2:rxandroid:$rxandroid"
+//    compile "io.reactivex.rxjava2:rxjava:$rxjava2"
+//    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+//    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+
+    //Coroutines
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.19"
+
+    // Logging and Crash-reporting
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+    api ('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
+    }
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
